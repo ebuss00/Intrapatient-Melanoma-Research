@@ -1,0 +1,27 @@
+%Step 1: Read Image
+I=imread('rice.png');
+imshow(I)
+
+%Step 2: Use Morphological Opening (what) to Estimate Background
+background= imopen(I, strel('disk',15));
+figure
+surf(double(background(1:8:end, 1:8:end))), zlim([0 255]);
+ax= gca;
+ax.YDir='reverse';
+
+%Step 3: Subtract the Background image from the Original Image
+I2=I-background;
+imshow(I2)
+
+%Combine step 2 & 3 by using imtophat which first calculates the
+%morphological opening and then subtracts it from the original image
+%I2=imtophat(I, strel('disk', 15));
+
+%Step 4
+I3=imadjust(I2);
+imshow(I3);
+
+%Step 5
+bw= imbarize(I3);
+bw=bwareaopen(bw, 50);
+imshow(bw)
