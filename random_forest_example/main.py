@@ -51,7 +51,7 @@ def normalize_columns(data):
 # Execute this if this file is run as __main__
 if __name__ == '__main__':
     # First command line argument is filename
-    data, labels = get_dataset_from_csv(sys.argv[1])
+    data, labels = get_dataset_from_csv("random_forest_example/data.csv")
     if data is None:
         print("Error reading file %s" % sys.argv[1])
         sys.exit(1)
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     n_trials = 50
     # Train n_trials random forests and report mean and stdev for accuracy
     accuracies = []
+    importances = np.zeros((n_trials,data.shape[1]))
     for i in range(0, n_trials):
         (
             X_train, X_test, y_train, y_test
@@ -70,6 +71,8 @@ if __name__ == '__main__':
         # Train random forest
         classifier = RandomForestClassifier(n_estimators=20)
         classifier.fit(X_train, y_train)
+        importances[i,:] = classifier.feature_importances_
         accuracies = accuracies + [accuracy(y_test, classifier.predict(X_test))]
 
     print("Mean Accuracy: %0.3f\nStandard Deviation: %0.3f" % (np.mean(accuracies), np.std(accuracies)))
+    print("Importances: ", np.mean(importances, axis=0))
